@@ -1,9 +1,18 @@
 class TabataTimer {
     constructor() {
-        // Timer configuration
-        this.workTime = 20; // seconds
-        this.restTime = 10; // seconds
-        this.totalRounds = 8;
+        // Default timer configuration
+        this.defaultConfig = {
+            workTime: 20,
+            restTime: 10,
+            totalRounds: 8,
+            getReadyTime: 10
+        };
+        
+        // Timer configuration (will be loaded from settings)
+        this.workTime = this.defaultConfig.workTime;
+        this.restTime = this.defaultConfig.restTime;
+        this.totalRounds = this.defaultConfig.totalRounds;
+        this.getReadyTime = this.defaultConfig.getReadyTime;
         
         // Timer state
         this.currentRound = 0;
@@ -11,27 +20,205 @@ class TabataTimer {
         this.isRunning = false;
         this.isPaused = false;
         this.isWorkPhase = true;
+        this.isGetReadyPhase = false;
         this.timerInterval = null;
         
         // DOM elements
         this.timeDisplay = document.getElementById('timeDisplay');
         this.phaseDisplay = document.getElementById('phaseDisplay');
         this.currentRoundDisplay = document.getElementById('currentRound');
+        this.totalRoundsDisplay = document.getElementById('totalRounds');
         this.progressFill = document.getElementById('progressFill');
         this.playPauseButton = document.getElementById('playPauseButton');
         this.resetButton = document.getElementById('resetButton');
         this.timerContainer = document.querySelector('.timer-display');
         
+        // Settings elements
+        this.settingsToggle = document.getElementById('settingsToggle');
+        this.settingsPanel = document.getElementById('settingsPanel');
+        this.roundsInput = document.getElementById('roundsInput');
+        this.workTimeInput = document.getElementById('workTimeInput');
+        this.restTimeInput = document.getElementById('restTimeInput');
+        this.getReadyInput = document.getElementById('getReadyInput');
+        this.applySettingsButton = document.getElementById('applySettings');
+        this.resetToDefaultsButton = document.getElementById('resetToDefaults');
+        
+        // Display elements
+        this.workoutDescription = document.getElementById('workoutDescription');
+        this.totalTimeDisplay = document.getElementById('totalTimeDisplay');
+        this.workTimeDisplay = document.getElementById('workTimeDisplay');
+        this.restTimeDisplay = document.getElementById('restTimeDisplay');
+        
         // Bind event listeners
         this.bindEvents();
         
-        // Initialize display
+        // Load settings and initialize display
+        this.loadSettings();
+        this.updateWorkoutInfo();
         this.updateDisplay();
     }
     
     bindEvents() {
         this.playPauseButton.addEventListener('click', () => this.togglePlayPause());
         this.resetButton.addEventListener('click', () => this.reset());
+        
+        // Settings events
+        this.settingsToggle.addEventListener('click', () => this.toggleSettings());
+        this.applySettingsButton.addEventListener('click', () => this.applySettings());
+        this.resetToDefaultsButton.addEventListener('click', () => this.resetToDefaults());
+        
+        // Real-time validation for inputs
+        const inputs = [this.roundsInput, this.workTimeInput, this.restTimeInput, this.getReadyInput].filter(input => input);
+        inputs.forEach(input => {
+            input.addEventListener('input', () => this.validateInput(input));
+        });
+    }
+    
+    loadSettings() {
+        // Load settings from localStorage or use defaults
+        const savedSettings = localStorage.getItem('tabataSettings');
+        if (savedSettings) {
+            const settings = JSON.parse(savedSettings);
+            this.workTime = settings.workTime || this.defaultConfig.workTime;
+            this.restTime = settings.restTime || this.defaultConfig.restTime;
+            this.totalRounds = settings.totalRounds || this.defaultConfig.totalRounds;
+            this.getReadyTime = settings.getReadyTime || this.defaultConfig.getReadyTime;
+        }
+        
+        // Update input values - check if elements exist first
+        if (this.roundsInput) this.roundsInput.value = this.totalRounds;
+        if (this.workTimeInput) this.workTimeInput.value = this.workTime;
+        if (this.restTimeInput) this.restTimeInput.value = this.restTime;
+        if (this.getReadyInput) {
+            this.getReadyInput.value = this.getReadyTime;
+        }
+    }
+    
+    saveSettings() {
+        const settings = {
+            workTime: this.workTime,
+            restTime: this.restTime,
+            totalRounds: this.totalRounds,
+            getReadyTime: this.getReadyTime
+        };
+        localStorage.setItem('tabataSettings', JSON.stringify(settings));
+    }
+    
+    toggleSettings() {
+        this.settingsPanel.classList.toggle('show');
+    }
+    
+    validateInput(input) {
+        const value = parseInt(input.value);
+        const min = parseInt(input.min);
+        const max = parseInt(input.max);
+        
+        if (value < min) {
+            input.value = min;
+        } else if (value > max) {
+            input.value = max;
+        }
+    }
+    
+    validateInput(input) {
+        const value = parseInt(input.value);
+        const min = parseInt(input.min);
+        const max = parseInt(input.max);
+        
+        if (value < min) {
+            input.value = min;
+        } else if (value > max) {
+            input.value = max;
+        }
+    }
+    
+    applySettings() {
+        // Prevent applying settings while timer is running
+        if (this.isRunning) {
+            alert('Please pause or reset the timer before changing settings.');
+            return;
+        }
+        
+        // Get and validate values
+        const newRounds = parseInt(this.roundsInput.value);
+        const newWorkTime = parseInt(this.workTimeInput.value);
+        const newRestTime = parseInt(this.restTimeInput.value);
+        const newGetReadyTime = this.getReadyInput ? parseInt(this.getReadyInput.value) : this.defaultConfig.getReadyTime;
+        
+        // Apply new settings
+        this.totalRounds = newRounds;
+        this.workTime = newWorkTime;
+        this.restTime = newRestTime;
+        this.getReadyTime = newGetReadyTime;
+        
+        // Save to localStorage
+        this.saveSettings();
+        
+        // Update displays
+        this.updateWorkoutInfo();
+        this.reset(); // Reset timer with new settings
+        
+        // Hide settings panel
+        this.settingsPanel.classList.remove('show');
+        
+        // Show confirmation
+        this.showNotification('Settings applied!');
+    }
+    
+    resetToDefaults() {
+        this.roundsInput.value = this.defaultConfig.totalRounds;
+        this.workTimeInput.value = this.defaultConfig.workTime;
+        this.restTimeInput.value = this.defaultConfig.restTime;
+        if (this.getReadyInput) {
+            this.getReadyInput.value = this.defaultConfig.getReadyTime;
+        }
+    }
+    
+    showNotification(message) {
+        // Simple notification system
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            z-index: 1000;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 2000);
+    }
+    
+    updateWorkoutInfo() {
+        // Update workout description
+        this.workoutDescription.textContent = `${this.totalRounds} rounds × ${this.workTime}s work + ${this.restTime}s rest`;
+        
+        // Update total rounds display
+        this.totalRoundsDisplay.textContent = `/ ${this.totalRounds}`;
+        
+        // Calculate and display times
+        const totalWorkTime = this.totalRounds * this.workTime;
+        const totalRestTime = this.totalRounds * this.restTime;
+        const totalTime = totalWorkTime + totalRestTime;
+        
+        this.totalTimeDisplay.textContent = this.formatTime(totalTime);
+        this.workTimeDisplay.textContent = this.formatTime(totalWorkTime);
+        this.restTimeDisplay.textContent = this.formatTime(totalRestTime);
+    }
+    
+    formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
     
     togglePlayPause() {
@@ -44,10 +231,11 @@ class TabataTimer {
     
     start() {
         if (!this.isRunning && !this.isPaused) {
-            // Starting fresh workout
-            this.currentRound = 1;
-            this.currentTime = this.workTime;
-            this.isWorkPhase = true;
+            // Starting fresh workout with get ready phase
+            this.currentRound = 0; // Start at 0 for get ready
+            this.currentTime = this.getReadyTime;
+            this.isGetReadyPhase = true;
+            this.isWorkPhase = false; // Will be set to true after get ready
         }
         
         this.isRunning = true;
@@ -80,9 +268,10 @@ class TabataTimer {
         this.currentRound = 0;
         this.currentTime = 0;
         this.isWorkPhase = true;
+        this.isGetReadyPhase = false;
         
         // Reset visual state
-        this.timerContainer.classList.remove('work', 'rest');
+        this.timerContainer.classList.remove('work', 'rest', 'get-ready');
         
         this.updateDisplay();
     }
@@ -98,7 +287,14 @@ class TabataTimer {
     }
     
     handlePhaseComplete() {
-        if (this.isWorkPhase) {
+        if (this.isGetReadyPhase) {
+            // Get ready phase complete, start first work phase
+            this.isGetReadyPhase = false;
+            this.currentRound = 1;
+            this.isWorkPhase = true;
+            this.currentTime = this.workTime;
+            this.playBeep(); // Single beep for work start
+        } else if (this.isWorkPhase) {
             // Work phase complete, switch to rest
             this.isWorkPhase = false;
             this.currentTime = this.restTime;
@@ -128,7 +324,7 @@ class TabataTimer {
         // Show completion
         this.phaseDisplay.textContent = 'Workout Complete!';
         this.timeDisplay.textContent = '🎉';
-        this.timerContainer.classList.remove('work', 'rest');
+        this.timerContainer.classList.remove('work', 'rest', 'get-ready');
         this.timerContainer.classList.add('complete');
         
         this.playBeep(3); // Triple beep for completion
@@ -149,13 +345,17 @@ class TabataTimer {
         
         // Update phase display
         if (this.isRunning || this.isPaused) {
-            if (this.isWorkPhase) {
+            if (this.isGetReadyPhase) {
+                this.phaseDisplay.textContent = 'GET READY';
+                this.timerContainer.classList.remove('work', 'rest');
+                this.timerContainer.classList.add('get-ready');
+            } else if (this.isWorkPhase) {
                 this.phaseDisplay.textContent = 'WORK';
-                this.timerContainer.classList.remove('rest');
+                this.timerContainer.classList.remove('rest', 'get-ready');
                 this.timerContainer.classList.add('work');
             } else {
                 this.phaseDisplay.textContent = 'REST';
-                this.timerContainer.classList.remove('work');
+                this.timerContainer.classList.remove('work', 'get-ready');
                 this.timerContainer.classList.add('rest');
             }
             
@@ -164,7 +364,7 @@ class TabataTimer {
             }
         } else {
             this.phaseDisplay.textContent = 'Ready to start';
-            this.timerContainer.classList.remove('work', 'rest', 'complete');
+            this.timerContainer.classList.remove('work', 'rest', 'complete', 'get-ready');
             this.timeDisplay.textContent = '00:00';
         }
         

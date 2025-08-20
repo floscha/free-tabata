@@ -10,8 +10,37 @@
     <div class="container">
         <header>
             <h1>Tabata Timer</h1>
-            <p>8 rounds × 20s work + 10s rest</p>
+            <div class="workout-header">
+                <p id="workoutDescription">8 rounds × 20s work + 10s rest</p>
+                <button class="btn-settings" id="settingsToggle">⚙️</button>
+            </div>
         </header>
+
+        <div class="settings-panel" id="settingsPanel">
+            <h3>Workout Settings</h3>
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label for="workTimeInput">Work (sec)</label>
+                    <input type="number" id="workTimeInput" min="5" max="120" value="20">
+                </div>
+                <div class="setting-item">
+                    <label for="restTimeInput">Rest (sec)</label>
+                    <input type="number" id="restTimeInput" min="5" max="120" value="10">
+                </div>
+                <div class="setting-item">
+                    <label for="roundsInput">Rounds</label>
+                    <input type="number" id="roundsInput" min="1" max="20" value="8">
+                </div>
+                <div class="setting-item">
+                    <label for="getReadyInput">Get Ready (sec)</label>
+                    <input type="number" id="getReadyInput" min="3" max="30" value="10">
+                </div>
+            </div>
+            <div class="settings-actions">
+                <button class="btn btn-primary" id="applySettings">Apply</button>
+                <button class="btn btn-secondary" id="resetToDefaults">Reset</button>
+            </div>
+        </div>
 
         <main class="timer-container">
             <div class="timer-display">
@@ -23,7 +52,7 @@
                 <div class="round-counter">
                     <span class="label">Round</span>
                     <span class="current-round" id="currentRound">0</span>
-                    <span class="total-rounds">/ 8</span>
+                    <span class="total-rounds" id="totalRounds">/ 8</span>
                 </div>
             </div>
 
@@ -39,15 +68,15 @@
             <div class="workout-info">
                 <div class="info-item">
                     <span class="label">Total Time:</span>
-                    <span class="value">4:00</span>
+                    <span class="value" id="totalTimeDisplay">4:00</span>
                 </div>
                 <div class="info-item">
                     <span class="label">Work Time:</span>
-                    <span class="value">2:40</span>
+                    <span class="value" id="workTimeDisplay">2:40</span>
                 </div>
                 <div class="info-item">
                     <span class="label">Rest Time:</span>
-                    <span class="value">1:20</span>
+                    <span class="value" id="restTimeDisplay">1:20</span>
                 </div>
             </div>
         </main>
