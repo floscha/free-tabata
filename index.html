@@ -11,7 +11,7 @@
         <header>
             <h1>Tabata Timer</h1>
             <div class="workout-header">
-                <p id="workoutDescription">8 rounds × 20s work + 10s rest</p>
+                <p id="workoutDescription"><strong>8</strong> rounds x (<strong>20</strong>s work + <strong>10</strong>s rest) = <strong>240</strong>s of 🔥</p>
                 <button class="btn-settings" id="settingsToggle">⚙️</button>
             </div>
         </header>
@@ -20,20 +20,29 @@
             <h3>Workout Settings</h3>
             <div class="settings-grid">
                 <div class="setting-item">
-                    <label for="workTimeInput">Work (sec)</label>
-                    <input type="number" id="workTimeInput" min="5" max="120" value="20">
+                    <label for="workTimeInput">Work</label>
+                    <div class="input-with-suffix">
+                        <input type="number" id="workTimeInput" min="5" max="120" value="20">
+                        <span class="input-suffix">s</span>
+                    </div>
                 </div>
                 <div class="setting-item">
-                    <label for="restTimeInput">Rest (sec)</label>
-                    <input type="number" id="restTimeInput" min="5" max="120" value="10">
+                    <label for="restTimeInput">Rest</label>
+                    <div class="input-with-suffix">
+                        <input type="number" id="restTimeInput" min="5" max="120" value="10">
+                        <span class="input-suffix">s</span>
+                    </div>
                 </div>
                 <div class="setting-item">
                     <label for="roundsInput">Rounds</label>
                     <input type="number" id="roundsInput" min="1" max="20" value="8">
                 </div>
                 <div class="setting-item">
-                    <label for="getReadyInput">Get Ready (sec)</label>
-                    <input type="number" id="getReadyInput" min="3" max="30" value="10">
+                    <label for="getReadyInput">Get Ready</label>
+                    <div class="input-with-suffix">
+                        <input type="number" id="getReadyInput" min="3" max="30" value="10">
+                        <span class="input-suffix">s</span>
+                    </div>
                 </div>
             </div>
             <div class="settings-actions">

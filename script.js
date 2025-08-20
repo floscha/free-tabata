@@ -196,8 +196,9 @@ class TabataTimer {
     }
     
     updateWorkoutInfo() {
-        // Update workout description
-        this.workoutDescription.textContent = `${this.totalRounds} rounds × ${this.workTime}s work + ${this.restTime}s rest`;
+        // Update workout description with new format
+        const totalTime = this.totalRounds * (this.workTime + this.restTime);
+        this.workoutDescription.innerHTML = `<strong>${this.totalRounds}</strong> rounds × (<strong>${this.workTime}</strong>s work + <strong>${this.restTime}</strong>s rest) = <strong>${totalTime}</strong>s of 🔥`;
         
         // Update total rounds display
         this.totalRoundsDisplay.textContent = `/ ${this.totalRounds}`;
