@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Tabata Timer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tabata Timer</h1>
+            <p>8 rounds × 20s work + 10s rest</p>
+        </header>
+
+        <main class="timer-container">
+            <div class="timer-display">
+                <div class="time" id="timeDisplay">00:00</div>
+                <div class="phase" id="phaseDisplay">Ready to start</div>
+            </div>
+
+            <div class="round-info">
+                <div class="round-counter">
+                    <span class="label">Round</span>
+                    <span class="current-round" id="currentRound">0</span>
+                    <span class="total-rounds">/ 8</span>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" id="startButton">Start Workout</button>
+                <button class="btn btn-secondary" id="pauseButton" disabled>Pause</button>
+                <button class="btn btn-secondary" id="resetButton">Reset</button>
+            </div>
+
+            <div class="workout-info">
+                <div class="info-item">
+                    <span class="label">Total Time:</span>
+                    <span class="value">4:00</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Work Time:</span>
+                    <span class="value">2:40</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Rest Time:</span>
+                    <span class="value">1:20</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
