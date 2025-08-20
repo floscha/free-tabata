@@ -18,8 +18,7 @@ class TabataTimer {
         this.phaseDisplay = document.getElementById('phaseDisplay');
         this.currentRoundDisplay = document.getElementById('currentRound');
         this.progressFill = document.getElementById('progressFill');
-        this.startButton = document.getElementById('startButton');
-        this.pauseButton = document.getElementById('pauseButton');
+        this.playPauseButton = document.getElementById('playPauseButton');
         this.resetButton = document.getElementById('resetButton');
         this.timerContainer = document.querySelector('.timer-display');
         
@@ -31,9 +30,16 @@ class TabataTimer {
     }
     
     bindEvents() {
-        this.startButton.addEventListener('click', () => this.start());
-        this.pauseButton.addEventListener('click', () => this.pause());
+        this.playPauseButton.addEventListener('click', () => this.togglePlayPause());
         this.resetButton.addEventListener('click', () => this.reset());
+    }
+    
+    togglePlayPause() {
+        if (this.isRunning) {
+            this.pause();
+        } else {
+            this.start();
+        }
     }
     
     start() {
@@ -47,10 +53,6 @@ class TabataTimer {
         this.isRunning = true;
         this.isPaused = false;
         
-        // Update button states
-        this.startButton.disabled = true;
-        this.pauseButton.disabled = false;
-        
         // Start the timer
         this.timerInterval = setInterval(() => this.tick(), 1000);
         
@@ -63,11 +65,6 @@ class TabataTimer {
             this.isRunning = false;
             this.isPaused = true;
             clearInterval(this.timerInterval);
-            
-            // Update button states
-            this.startButton.disabled = false;
-            this.pauseButton.disabled = true;
-            this.startButton.textContent = 'Resume';
             
             this.updateDisplay();
         }
@@ -83,11 +80,6 @@ class TabataTimer {
         this.currentRound = 0;
         this.currentTime = 0;
         this.isWorkPhase = true;
-        
-        // Reset button states
-        this.startButton.disabled = false;
-        this.pauseButton.disabled = true;
-        this.startButton.textContent = 'Start Workout';
         
         // Reset visual state
         this.timerContainer.classList.remove('work', 'rest');
@@ -132,11 +124,6 @@ class TabataTimer {
     completeWorkout() {
         this.isRunning = false;
         clearInterval(this.timerInterval);
-        
-        // Reset button states
-        this.startButton.disabled = false;
-        this.pauseButton.disabled = true;
-        this.startButton.textContent = 'Start Workout';
         
         // Show completion
         this.phaseDisplay.textContent = 'Workout Complete!';
@@ -184,8 +171,27 @@ class TabataTimer {
         // Update round display
         this.currentRoundDisplay.textContent = this.currentRound;
         
+        // Update button text based on state
+        this.updateButtonText();
+        
         // Update progress bar
         this.updateProgressBar();
+    }
+    
+    updateButtonText() {
+        if (!this.isRunning && !this.isPaused) {
+            // Timer is idle
+            this.playPauseButton.textContent = 'Start Workout';
+            this.playPauseButton.className = 'btn btn-primary';
+        } else if (this.isRunning) {
+            // Timer is running
+            this.playPauseButton.textContent = 'Pause';
+            this.playPauseButton.className = 'btn btn-warning';
+        } else if (this.isPaused) {
+            // Timer is paused
+            this.playPauseButton.textContent = 'Resume';
+            this.playPauseButton.className = 'btn btn-primary';
+        }
     }
     
     updateProgressBar() {
@@ -267,14 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
             e.preventDefault();
-            const startButton = document.getElementById('startButton');
-            const pauseButton = document.getElementById('pauseButton');
-            
-            if (!startButton.disabled) {
-                startButton.click();
-            } else if (!pauseButton.disabled) {
-                pauseButton.click();
-            }
+            document.getElementById('playPauseButton').click();
         } else if (e.code === 'KeyR') {
             e.preventDefault();
             document.getElementById('resetButton').click();
