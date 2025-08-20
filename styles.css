@@ -42,7 +42,7 @@ header p {
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     flex-wrap: wrap;
 }
 
@@ -162,7 +162,7 @@ header p {
 .timer-container {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .timer-display {
