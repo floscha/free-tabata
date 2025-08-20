@@ -45,9 +45,6 @@ class TabataTimer {
         
         // Display elements
         this.workoutDescription = document.getElementById('workoutDescription');
-        this.totalTimeDisplay = document.getElementById('totalTimeDisplay');
-        this.workTimeDisplay = document.getElementById('workTimeDisplay');
-        this.restTimeDisplay = document.getElementById('restTimeDisplay');
         
         // Bind event listeners
         this.bindEvents();
@@ -204,15 +201,6 @@ class TabataTimer {
         
         // Update total rounds display
         this.totalRoundsDisplay.textContent = `/ ${this.totalRounds}`;
-        
-        // Calculate and display times
-        const totalWorkTime = this.totalRounds * this.workTime;
-        const totalRestTime = this.totalRounds * this.restTime;
-        const totalTime = totalWorkTime + totalRestTime;
-        
-        this.totalTimeDisplay.textContent = this.formatTime(totalTime);
-        this.workTimeDisplay.textContent = this.formatTime(totalWorkTime);
-        this.restTimeDisplay.textContent = this.formatTime(totalRestTime);
     }
     
     formatTime(seconds) {
