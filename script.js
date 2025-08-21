@@ -22,6 +22,7 @@ class TabataTimer {
         this.isWorkPhase = true;
         this.isGetReadyPhase = false;
         this.timerInterval = null;
+        this.hasBeenStarted = false; // Track if timer has ever been started
         
         // DOM elements
         this.timeDisplay = document.getElementById('timeDisplay');
@@ -29,7 +30,6 @@ class TabataTimer {
         this.currentRoundDisplay = document.getElementById('currentRound');
         this.totalRoundsDisplay = document.getElementById('totalRounds');
         this.progressFill = document.getElementById('progressFill');
-        this.resetButton = document.getElementById('resetButton');
         this.timerContainer = document.querySelector('.timer-display');
         
         // Settings elements
@@ -55,8 +55,22 @@ class TabataTimer {
     }
     
     bindEvents() {
-        this.timerContainer.addEventListener('click', () => this.togglePlayPause());
-        this.resetButton.addEventListener('click', () => this.reset());
+        // Handle single click vs double click on timer
+        let clickTimeout;
+        this.timerContainer.addEventListener('click', (e) => {
+            if (clickTimeout) {
+                // Double click detected - reset timer
+                clearTimeout(clickTimeout);
+                clickTimeout = null;
+                this.reset();
+            } else {
+                // Single click - start/pause after delay to detect double click
+                clickTimeout = setTimeout(() => {
+                    clickTimeout = null;
+                    this.togglePlayPause();
+                }, 250);
+            }
+        });
         
         // Settings events
         this.settingsToggle.addEventListener('click', () => this.toggleSettings());
@@ -224,6 +238,7 @@ class TabataTimer {
             this.currentTime = this.getReadyTime;
             this.isGetReadyPhase = true;
             this.isWorkPhase = false; // Will be set to true after get ready
+            this.hasBeenStarted = true; // Mark that timer has been started
         }
         
         this.isRunning = true;
@@ -257,6 +272,7 @@ class TabataTimer {
         this.currentTime = 0;
         this.isWorkPhase = true;
         this.isGetReadyPhase = false;
+        this.hasBeenStarted = false; // Reset the started flag
         
         // Reset visual state
         this.timerContainer.classList.remove('work', 'rest', 'get-ready');
@@ -349,9 +365,17 @@ class TabataTimer {
             
             if (this.isPaused) {
                 this.phaseDisplay.textContent += ' (PAUSED)';
+                // Add visual hint for double-click to reset (only if timer has been started)
+                if (this.hasBeenStarted) {
+                    this.phaseDisplay.innerHTML += '<br><small style="opacity: 0.7; font-size: 0.7em;">Double-click to reset</small>';
+                }
             }
         } else {
-            this.phaseDisplay.textContent = 'Press to start';
+            if (this.hasBeenStarted) {
+                this.phaseDisplay.innerHTML = 'Click to start<br><small style="opacity: 0.7; font-size: 0.7em;">Double-click to reset</small>';
+            } else {
+                this.phaseDisplay.innerHTML = 'Click to start';
+            }
             this.timerContainer.classList.remove('work', 'rest', 'complete', 'get-ready');
             this.timeDisplay.textContent = '00:00';
         }
@@ -421,8 +445,9 @@ class TabataTimer {
 }
 
 // Initialize the timer when the page loads
+let timerInstance;
 document.addEventListener('DOMContentLoaded', () => {
-    new TabataTimer();
+    timerInstance = new TabataTimer();
 });
 
 // Add some visual feedback for better UX
@@ -442,10 +467,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
             e.preventDefault();
-            document.getElementById('playPauseButton').click();
+            if (timerInstance) {
+                timerInstance.togglePlayPause();
+            }
         } else if (e.code === 'KeyR') {
             e.preventDefault();
-            document.getElementById('resetButton').click();
+            if (timerInstance) {
+                timerInstance.reset();
+            }
         }
     });
     
