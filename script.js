@@ -309,7 +309,14 @@ class TabataTimer {
             this.currentTime = this.workTime;
             this.playBeep(); // Single beep for work start
         } else if (this.isWorkPhase) {
-            // Work phase complete, switch to rest
+            // Work phase complete, check if this was the last round
+            if (this.currentRound >= this.totalRounds) {
+                // Last work phase complete - go directly to workout completion
+                this.completeWorkout();
+                return;
+            }
+            
+            // Not the last round - switch to rest
             this.isWorkPhase = false;
             this.currentTime = this.restTime;
             this.playBeep(2); // Double beep for rest
