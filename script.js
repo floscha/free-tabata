@@ -30,8 +30,8 @@ class TabataTimer {
         this.phaseDisplay = document.getElementById('phaseDisplay');
         this.currentRoundDisplay = document.getElementById('currentRound');
         this.totalRoundsDisplay = document.getElementById('totalRounds');
-        this.progressFill = document.getElementById('progressFill');
         this.timerContainer = document.querySelector('.timer-display');
+        this.roundBoxes = document.getElementById('roundBoxes');
         
         // Settings elements
         this.settingsToggle = document.getElementById('settingsToggle');
@@ -52,6 +52,7 @@ class TabataTimer {
         // Load settings and initialize display
         this.loadSettings();
         this.updateWorkoutInfo();
+        this.generateRoundBoxes();
         this.updateDisplay();
     }
     
@@ -167,6 +168,7 @@ class TabataTimer {
         
         // Update displays
         this.updateWorkoutInfo();
+        this.generateRoundBoxes();
         this.reset(); // Reset timer with new settings
         
         // Hide settings panel
@@ -207,6 +209,51 @@ class TabataTimer {
         setTimeout(() => {
             document.body.removeChild(notification);
         }, 2000);
+    }
+    
+    // Generate round progress boxes
+    generateRoundBoxes() {
+        if (!this.roundBoxes) return;
+        
+        // Clear existing boxes
+        this.roundBoxes.innerHTML = '';
+        
+        // Create boxes for each round
+        for (let i = 1; i <= this.totalRounds; i++) {
+            const box = document.createElement('div');
+            box.className = 'round-box';
+            box.setAttribute('data-round', i);
+            this.roundBoxes.appendChild(box);
+        }
+        
+        this.updateRoundBoxes();
+    }
+    
+    // Update round boxes visual state
+    updateRoundBoxes() {
+        if (!this.roundBoxes) return;
+        
+        const boxes = this.roundBoxes.querySelectorAll('.round-box');
+        const isWorkoutComplete = this.timerContainer.classList.contains('complete');
+        
+        boxes.forEach((box, index) => {
+            const roundNumber = index + 1;
+            box.classList.remove('completed', 'current', 'rest');
+            
+            if (isWorkoutComplete || roundNumber < this.currentRound) {
+                // Round is completely finished or workout is complete
+                box.classList.add('completed');
+            } else if (roundNumber === this.currentRound && this.currentRound > 0) {
+                // Current round in progress
+                box.classList.add('current');
+                
+                // Add rest class if in rest phase
+                if (!this.isWorkPhase && !this.isGetReadyPhase) {
+                    box.classList.add('rest');
+                }
+            }
+            // Otherwise, box remains in default state (upcoming round)
+        });
     }
     
     updateWorkoutInfo() {
@@ -288,6 +335,7 @@ class TabataTimer {
         this.timerContainer.classList.remove('work', 'rest', 'get-ready');
         
         this.updateDisplay();
+        this.updateRoundBoxes();
     }
     
     tick() {
@@ -332,9 +380,6 @@ class TabataTimer {
             this.isWorkPhase = true;
             this.currentTime = this.workTime;
             this.playBeep(); // Single beep for work
-            
-            // Animate round completion
-            this.animateRoundComplete();
         }
     }
     
@@ -350,6 +395,9 @@ class TabataTimer {
         this.timeDisplay.textContent = '�';
         this.timerContainer.classList.remove('work', 'rest', 'get-ready');
         this.timerContainer.classList.add('complete');
+        
+        // Update round boxes to mark all rounds as completed
+        this.updateRoundBoxes();
         
         // Add confetti animation
         this.createConfetti();
@@ -406,38 +454,15 @@ class TabataTimer {
         // Update round display
         this.currentRoundDisplay.textContent = this.currentRound;
         
-        // Update progress bar
-        this.updateProgressBar();
-    }
-    
-    updateProgressBar() {
-        if (!this.isRunning && !this.isPaused) {
-            this.progressFill.style.width = '0%';
-            return;
-        }
-        
-        const totalWorkoutTime = this.totalRounds * (this.workTime + this.restTime);
-        const completedRounds = this.currentRound - 1;
-        const completedTime = completedRounds * (this.workTime + this.restTime);
-        
-        let currentPhaseTime = 0;
-        if (this.isWorkPhase) {
-            currentPhaseTime = this.workTime - this.currentTime;
+        // Apply active class only when round is greater than 0
+        if (this.currentRound > 0) {
+            this.currentRoundDisplay.classList.add('active');
         } else {
-            currentPhaseTime = this.workTime + (this.restTime - this.currentTime);
+            this.currentRoundDisplay.classList.remove('active');
         }
         
-        const totalElapsedTime = completedTime + currentPhaseTime;
-        const progressPercent = (totalElapsedTime / totalWorkoutTime) * 100;
-        
-        this.progressFill.style.width = `${Math.min(progressPercent, 100)}%`;
-    }
-    
-    animateRoundComplete() {
-        this.currentRoundDisplay.parentElement.classList.add('round-complete');
-        setTimeout(() => {
-            this.currentRoundDisplay.parentElement.classList.remove('round-complete');
-        }, 600);
+        // Update round boxes
+        this.updateRoundBoxes();
     }
     
     playBeep(count = 1) {

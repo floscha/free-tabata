@@ -19,8 +19,7 @@ body {
     border-radius: 20px;
     padding: 2rem;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
-    width: 90%;
+    max-width/* Attribution footer */: 90%;
     text-align: center;
 }
 
@@ -332,35 +331,125 @@ header p {
 }
 
 .round-info {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .round-counter {
-    background: #f8f9fa;
-    padding: 1rem 2rem;
-    border-radius: 10px;
-    border: 2px solid #e9ecef;
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    color: #2d3748;
 }
 
 .round-counter .label {
-    color: #666;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    margin-right: 8px;
 }
 
-.current-round {
-    font-size: 2rem;
+.round-counter .current-round {
     font-weight: bold;
-    color: #333;
-    margin: 0 0.5rem;
+    font-size: 1.2em;
+    transition: color 0.3s ease;
 }
 
-.total-rounds {
-    font-size: 1.2rem;
-    color: #666;
+.round-counter .current-round.active {
+    color: #2d3748;
+}
+
+.round-counter .total-rounds {
+    color: #718096;
+}
+
+/* Round progress boxes */
+.round-boxes {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.round-box {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #cbd5e0;
+    border-radius: 4px;
+    background: #f7fafc;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.round-box.completed {
+    background: #4ecdc4;
+    border-color: #44c9a1;
+    box-shadow: 0 0 8px rgba(78, 205, 196, 0.3);
+}
+
+.round-box.current {
+    border-color: #e53e3e;
+    background: #fed7d7;
+    animation: pulse-red-box 1s infinite;
+}
+
+.round-box.current.rest {
+    border-color: #4ecdc4;
+    background: #b2f5ea;
+    animation: pulse-green-box 1s infinite;
+}
+
+@keyframes pulse-red-box {
+    0% { 
+        border-color: #e53e3e;
+        background: #fed7d7;
+        box-shadow: 0 0 0 rgba(229, 62, 62, 0.7);
+        transform: scale(1);
+    }
+    50% { 
+        border-color: #c53030;
+        background: #fc8181;
+        box-shadow: 0 0 8px rgba(229, 62, 62, 0.4);
+        transform: scale(1.02);
+    }
+    100% { 
+        border-color: #e53e3e;
+        background: #fed7d7;
+        box-shadow: 0 0 0 rgba(229, 62, 62, 0.7);
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse-green-box {
+    0% { 
+        border-color: #4ecdc4;
+        background: #b2f5ea;
+        box-shadow: 0 0 0 rgba(78, 205, 196, 0.7);
+        transform: scale(1);
+    }
+    50% { 
+        border-color: #44c9a1;
+        background: #81e6d9;
+        box-shadow: 0 0 8px rgba(78, 205, 196, 0.4);
+        transform: scale(1.02);
+    }
+    100% { 
+        border-color: #4ecdc4;
+        background: #b2f5ea;
+        box-shadow: 0 0 0 rgba(78, 205, 196, 0.7);
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 480px) {
+    .round-boxes {
+        gap: 6px;
+        max-width: 320px;
+    }
+    
+    .round-box {
+        width: 20px;
+        height: 20px;
+    }
 }
 
 .progress-bar {
@@ -494,15 +583,4 @@ header p {
     .workout-info {
         grid-template-columns: 1fr;
     }
-}
-
-/* Animation for round completion */
-.round-complete {
-    animation: roundComplete 0.6s ease;
-}
-
-@keyframes roundComplete {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); background: #4caf50; }
-    100% { transform: scale(1); }
 }
