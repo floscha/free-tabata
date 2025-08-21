@@ -34,7 +34,7 @@ header h1 {
 header p {
     color: #666;
     font-size: 1.1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 0;
 }
 
 .workout-header {
@@ -42,7 +42,7 @@ header p {
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
     flex-wrap: wrap;
 }
 
@@ -76,7 +76,7 @@ header p {
     border: 2px solid #e9ecef;
     border-radius: 15px;
     padding: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 0;
     transform: translateY(-10px);
     opacity: 0;
     visibility: hidden;
@@ -187,6 +187,7 @@ header p {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    margin-top: 10px;
 }
 
 .timer-display {
