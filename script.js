@@ -23,6 +23,7 @@ class TabataTimer {
         this.isGetReadyPhase = false;
         this.timerInterval = null;
         this.hasBeenStarted = false; // Track if timer has ever been started
+        this.wakeLock = null; // For preventing screen sleep
         
         // DOM elements
         this.timeDisplay = document.getElementById('timeDisplay');
@@ -244,6 +245,9 @@ class TabataTimer {
         this.isRunning = true;
         this.isPaused = false;
         
+        // Prevent screen from sleeping while timer is running
+        this.requestWakeLock();
+        
         // Start the timer
         this.timerInterval = setInterval(() => this.tick(), 1000);
         
@@ -257,6 +261,9 @@ class TabataTimer {
             this.isPaused = true;
             clearInterval(this.timerInterval);
             
+            // Release wake lock when paused
+            this.releaseWakeLock();
+            
             this.updateDisplay();
         }
     }
@@ -266,6 +273,9 @@ class TabataTimer {
         this.isRunning = false;
         this.isPaused = false;
         clearInterval(this.timerInterval);
+        
+        // Release wake lock when reset
+        this.releaseWakeLock();
         
         // Reset state
         this.currentRound = 0;
@@ -324,6 +334,9 @@ class TabataTimer {
     completeWorkout() {
         this.isRunning = false;
         clearInterval(this.timerInterval);
+        
+        // Release wake lock when workout completes
+        this.releaseWakeLock();
         
         // Show completion
         this.phaseDisplay.textContent = 'Workout Complete!';
@@ -440,6 +453,74 @@ class TabataTimer {
                     oscillator.stop(audioContext.currentTime + 0.3);
                 }, i * 200);
             }
+        }
+    }
+    
+    // Wake Lock methods to prevent screen sleep during workouts
+    async requestWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                this.wakeLock = await navigator.wakeLock.request('screen');
+                console.log('Screen wake lock activated');
+                
+                // Listen for wake lock release (e.g., when tab becomes hidden)
+                this.wakeLock.addEventListener('release', () => {
+                    console.log('Screen wake lock released');
+                });
+            } else {
+                console.log('Screen Wake Lock API not supported');
+                // Fallback: try to keep screen active with a hidden video element
+                this.createFallbackWakeLock();
+            }
+        } catch (err) {
+            console.log('Failed to activate screen wake lock:', err);
+            // Fallback method
+            this.createFallbackWakeLock();
+        }
+    }
+    
+    releaseWakeLock() {
+        if (this.wakeLock) {
+            this.wakeLock.release();
+            this.wakeLock = null;
+            console.log('Screen wake lock manually released');
+        }
+        
+        // Clean up fallback if used
+        if (this.fallbackVideo) {
+            this.fallbackVideo.pause();
+            this.fallbackVideo.remove();
+            this.fallbackVideo = null;
+        }
+    }
+    
+    // Fallback method for browsers that don't support Wake Lock API
+    createFallbackWakeLock() {
+        try {
+            // Create a tiny, silent video that plays in loop to prevent sleep
+            this.fallbackVideo = document.createElement('video');
+            this.fallbackVideo.setAttribute('muted', '');
+            this.fallbackVideo.setAttribute('playsinline', '');
+            this.fallbackVideo.setAttribute('loop', '');
+            this.fallbackVideo.style.position = 'fixed';
+            this.fallbackVideo.style.opacity = '0';
+            this.fallbackVideo.style.pointerEvents = 'none';
+            this.fallbackVideo.style.width = '1px';
+            this.fallbackVideo.style.height = '1px';
+            this.fallbackVideo.style.top = '-1px';
+            this.fallbackVideo.style.left = '-1px';
+            
+            // Create a minimal video data URL (1x1 pixel, 1 second)
+            this.fallbackVideo.src = 'data:video/mp4;base64,AAAAHGZ0eXBpc29tAAACAGlzb21pc28ybXA0MQAAAAhmcmVlAAAAKG1kYXQAAAAgAQAAAAAAAAAgAAAAAAAAAAgAAAAAAAAAGBgYGBgYGBgYGBgYGBgYGBgY';
+            
+            document.body.appendChild(this.fallbackVideo);
+            this.fallbackVideo.play().catch(() => {
+                console.log('Fallback wake lock video failed to play');
+            });
+            
+            console.log('Fallback wake lock method activated');
+        } catch (err) {
+            console.log('Fallback wake lock method failed:', err);
         }
     }
 }
