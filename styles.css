@@ -100,11 +100,10 @@ header p {
 
 .settings-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 1rem;
     margin-bottom: 1.5rem;
-    max-width: 300px;
+    max-width: 400px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -441,6 +440,11 @@ header p {
 }
 
 @media (max-width: 480px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+        max-width: 250px;
+    }
+    
     .round-boxes {
         gap: 6px;
         max-width: 320px;

@@ -39,7 +39,6 @@ class TabataTimer {
         this.roundsInput = document.getElementById('roundsInput');
         this.workTimeInput = document.getElementById('workTimeInput');
         this.restTimeInput = document.getElementById('restTimeInput');
-        this.getReadyInput = document.getElementById('getReadyInput');
         this.applySettingsButton = document.getElementById('applySettings');
         this.resetToDefaultsButton = document.getElementById('resetToDefaults');
         
@@ -80,7 +79,7 @@ class TabataTimer {
         this.resetToDefaultsButton.addEventListener('click', () => this.resetToDefaults());
         
         // Real-time validation for inputs
-        const inputs = [this.roundsInput, this.workTimeInput, this.restTimeInput, this.getReadyInput].filter(input => input);
+                const inputs = [this.roundsInput, this.workTimeInput, this.restTimeInput].filter(input => input);
         inputs.forEach(input => {
             input.addEventListener('input', () => this.validateInput(input));
         });
@@ -94,24 +93,20 @@ class TabataTimer {
             this.workTime = settings.workTime || this.defaultConfig.workTime;
             this.restTime = settings.restTime || this.defaultConfig.restTime;
             this.totalRounds = settings.totalRounds || this.defaultConfig.totalRounds;
-            this.getReadyTime = settings.getReadyTime || this.defaultConfig.getReadyTime;
+            this.getReadyTime = this.restTime; // Use rest time for get ready
         }
         
         // Update input values - check if elements exist first
         if (this.roundsInput) this.roundsInput.value = this.totalRounds;
         if (this.workTimeInput) this.workTimeInput.value = this.workTime;
         if (this.restTimeInput) this.restTimeInput.value = this.restTime;
-        if (this.getReadyInput) {
-            this.getReadyInput.value = this.getReadyTime;
-        }
     }
     
     saveSettings() {
         const settings = {
             workTime: this.workTime,
             restTime: this.restTime,
-            totalRounds: this.totalRounds,
-            getReadyTime: this.getReadyTime
+            totalRounds: this.totalRounds
         };
         localStorage.setItem('tabataSettings', JSON.stringify(settings));
     }
@@ -155,13 +150,12 @@ class TabataTimer {
         const newRounds = parseInt(this.roundsInput.value);
         const newWorkTime = parseInt(this.workTimeInput.value);
         const newRestTime = parseInt(this.restTimeInput.value);
-        const newGetReadyTime = this.getReadyInput ? parseInt(this.getReadyInput.value) : this.defaultConfig.getReadyTime;
         
         // Apply new settings
         this.totalRounds = newRounds;
         this.workTime = newWorkTime;
         this.restTime = newRestTime;
-        this.getReadyTime = newGetReadyTime;
+        this.getReadyTime = newRestTime; // Use rest time for get ready countdown
         
         // Save to localStorage
         this.saveSettings();
@@ -182,9 +176,6 @@ class TabataTimer {
         this.roundsInput.value = this.defaultConfig.totalRounds;
         this.workTimeInput.value = this.defaultConfig.workTime;
         this.restTimeInput.value = this.defaultConfig.restTime;
-        if (this.getReadyInput) {
-            this.getReadyInput.value = this.defaultConfig.getReadyTime;
-        }
     }
     
     showNotification(message) {
@@ -259,7 +250,7 @@ class TabataTimer {
     updateWorkoutInfo() {
         // Update workout description with new format
         const totalTime = this.totalRounds * (this.workTime + this.restTime);
-        this.workoutDescription.innerHTML = `<strong>${this.totalRounds}</strong> rounds × (<strong>${this.workTime}</strong>s work + <strong>${this.restTime}</strong>s rest) = <strong>${totalTime}</strong>s of 🔥`;
+        this.workoutDescription.innerHTML = `<strong>${this.totalRounds}</strong> rounds × (<strong>${this.workTime}</strong>s work + <strong>${this.restTime}</strong>s rest) = <strong>${totalTime}</strong>s`;
         
         // Update total rounds display
         this.totalRoundsDisplay.textContent = `/ ${this.totalRounds}`;
