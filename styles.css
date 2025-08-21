@@ -237,6 +237,49 @@ header p {
     100% { transform: scale(1); }
 }
 
+@keyframes celebration {
+    0% { 
+        transform: scale(1) rotate(0deg);
+        background: linear-gradient(135deg, #4ecdc4, #44c9a1);
+    }
+    25% { 
+        transform: scale(1.1) rotate(5deg);
+        background: linear-gradient(135deg, #ffd700, #ff6b6b);
+    }
+    50% { 
+        transform: scale(1.2) rotate(-5deg);
+        background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+    }
+    75% { 
+        transform: scale(1.1) rotate(3deg);
+        background: linear-gradient(135deg, #4ecdc4, #ffd700);
+    }
+    100% { 
+        transform: scale(1) rotate(0deg);
+        background: linear-gradient(135deg, #ffd700, #ff6b6b);
+    }
+}
+
+@keyframes confetti {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+.timer-display.complete {
+    animation: celebration 0.6s ease-in-out;
+    background: linear-gradient(135deg, #ffd700, #ff6b6b) !important;
+    color: white;
+    border-color: #ffd700;
+    position: relative;
+    overflow: hidden;
+}
+
 .time {
     font-size: 4rem;
     font-weight: bold;

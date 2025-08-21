@@ -345,18 +345,21 @@ class TabataTimer {
         // Release wake lock when workout completes
         this.releaseWakeLock();
         
-        // Show completion
-        this.phaseDisplay.textContent = 'Workout Complete!';
-        this.timeDisplay.textContent = '🎉';
+        // Show completion with celebration
+        this.phaseDisplay.innerHTML = 'Workout Complete!<br><small style="font-size: 0.7em; opacity: 0.9;">🎉 Amazing job! 🎉</small>';
+        this.timeDisplay.textContent = '�';
         this.timerContainer.classList.remove('work', 'rest', 'get-ready');
         this.timerContainer.classList.add('complete');
         
+        // Add confetti animation
+        this.createConfetti();
+        
         this.playBeep(3); // Triple beep for completion
         
-        // Auto-reset after 3 seconds
+        // Auto-reset after 5 seconds (longer to enjoy the celebration)
         setTimeout(() => {
             this.reset();
-        }, 3000);
+        }, 5000);
     }
     
     updateDisplay() {
@@ -461,6 +464,44 @@ class TabataTimer {
                 }, i * 200);
             }
         }
+    }
+    
+    // Create confetti animation for celebration
+    createConfetti() {
+        const colors = ['#ffd700', '#ff6b6b', '#4ecdc4', '#ff9800', '#9c27b0', '#4caf50'];
+        const confettiContainer = document.createElement('div');
+        confettiContainer.style.position = 'fixed';
+        confettiContainer.style.top = '0';
+        confettiContainer.style.left = '0';
+        confettiContainer.style.width = '100%';
+        confettiContainer.style.height = '100%';
+        confettiContainer.style.pointerEvents = 'none';
+        confettiContainer.style.zIndex = '1000';
+        
+        document.body.appendChild(confettiContainer);
+        
+        // Create multiple confetti pieces
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'absolute';
+            confetti.style.width = '10px';
+            confetti.style.height = '10px';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = '100%';
+            confetti.style.borderRadius = '50%';
+            confetti.style.animation = `confetti ${2 + Math.random() * 3}s linear forwards`;
+            confetti.style.animationDelay = Math.random() * 2 + 's';
+            
+            confettiContainer.appendChild(confetti);
+        }
+        
+        // Remove confetti after animation
+        setTimeout(() => {
+            if (confettiContainer.parentNode) {
+                confettiContainer.parentNode.removeChild(confettiContainer);
+            }
+        }, 6000);
     }
     
     // Wake Lock methods to prevent screen sleep during workouts
