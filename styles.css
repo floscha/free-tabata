@@ -196,6 +196,14 @@ header p {
     padding: 2rem;
     border: 3px solid #e9ecef;
     transition: all 0.3s ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.timer-display:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: #cbd5e0;
 }
 
 .timer-display.work {

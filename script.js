@@ -29,7 +29,6 @@ class TabataTimer {
         this.currentRoundDisplay = document.getElementById('currentRound');
         this.totalRoundsDisplay = document.getElementById('totalRounds');
         this.progressFill = document.getElementById('progressFill');
-        this.playPauseButton = document.getElementById('playPauseButton');
         this.resetButton = document.getElementById('resetButton');
         this.timerContainer = document.querySelector('.timer-display');
         
@@ -56,7 +55,7 @@ class TabataTimer {
     }
     
     bindEvents() {
-        this.playPauseButton.addEventListener('click', () => this.togglePlayPause());
+        this.timerContainer.addEventListener('click', () => this.togglePlayPause());
         this.resetButton.addEventListener('click', () => this.reset());
         
         // Settings events
@@ -352,7 +351,7 @@ class TabataTimer {
                 this.phaseDisplay.textContent += ' (PAUSED)';
             }
         } else {
-            this.phaseDisplay.textContent = 'Ready to start';
+            this.phaseDisplay.textContent = 'Press to start';
             this.timerContainer.classList.remove('work', 'rest', 'complete', 'get-ready');
             this.timeDisplay.textContent = '00:00';
         }
@@ -360,27 +359,8 @@ class TabataTimer {
         // Update round display
         this.currentRoundDisplay.textContent = this.currentRound;
         
-        // Update button text based on state
-        this.updateButtonText();
-        
         // Update progress bar
         this.updateProgressBar();
-    }
-    
-    updateButtonText() {
-        if (!this.isRunning && !this.isPaused) {
-            // Timer is idle
-            this.playPauseButton.textContent = 'Start Workout';
-            this.playPauseButton.className = 'btn btn-primary';
-        } else if (this.isRunning) {
-            // Timer is running
-            this.playPauseButton.textContent = 'Pause';
-            this.playPauseButton.className = 'btn btn-warning';
-        } else if (this.isPaused) {
-            // Timer is paused
-            this.playPauseButton.textContent = 'Resume';
-            this.playPauseButton.className = 'btn btn-primary';
-        }
     }
     
     updateProgressBar() {
