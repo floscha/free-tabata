@@ -625,6 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Add a small instruction for keyboard shortcuts
     const container = document.querySelector('.container');
+    const footer = document.querySelector('.attribution');
     const shortcuts = document.createElement('div');
     shortcuts.style.cssText = `
         margin-top: 1rem; 
@@ -633,5 +634,5 @@ document.addEventListener('DOMContentLoaded', () => {
         text-align: center;
     `;
     shortcuts.innerHTML = 'Press <strong>Space</strong> to start/pause • Press <strong>R</strong> to reset';
-    container.appendChild(shortcuts);
+    container.insertBefore(shortcuts, footer);
 });
