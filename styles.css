@@ -278,9 +278,8 @@ header p {
 
 /* Attribution footer */
 .attribution {
-    margin-top: 2rem;
+    margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid #e9ecef;
     font-size: 0.8em;
     color: #666;
     text-align: center;
@@ -295,6 +294,13 @@ header p {
 .attribution a:hover {
     color: #61D791;
     text-decoration: underline;
+}
+
+.shortcuts {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: #666;
+    text-align: center;
 }
 
 .time {

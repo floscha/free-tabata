@@ -627,12 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.container');
     const footer = document.querySelector('.attribution');
     const shortcuts = document.createElement('div');
-    shortcuts.style.cssText = `
-        margin-top: 1rem; 
-        font-size: 0.8rem; 
-        color: #666; 
-        text-align: center;
-    `;
+    shortcuts.className = 'shortcuts';
     shortcuts.innerHTML = 'Press <strong>Space</strong> to start/pause • Press <strong>R</strong> to reset';
     container.insertBefore(shortcuts, footer);
 });
