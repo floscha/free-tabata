@@ -31,7 +31,7 @@ Tabata is a high-intensity interval training protocol consisting of:
 
 ## 🚀 Live Demo
 
-Visit the live demo: **[https://floscha.github.io/free-tabata](https://floscha.github.io/free-tabata)**
+Visit the live application: **[free-tabata.com](https://free-tabata.com)**
 
 ## 🛠️ Local Development
 
