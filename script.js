@@ -79,9 +79,12 @@ class TabataTimer {
         this.resetToDefaultsButton.addEventListener('click', () => this.resetToDefaults());
         
         // Real-time validation for inputs
-                const inputs = [this.roundsInput, this.workTimeInput, this.restTimeInput].filter(input => input);
+        const inputs = [this.roundsInput, this.workTimeInput, this.restTimeInput].filter(input => input);
         inputs.forEach(input => {
-            input.addEventListener('input', () => this.validateInput(input));
+            input.addEventListener('input', () => {
+                this.validateInput(input);
+                this.updateWorkoutInfoPreview();
+            });
         });
     }
     
@@ -127,16 +130,14 @@ class TabataTimer {
         }
     }
     
-    validateInput(input) {
-        const value = parseInt(input.value);
-        const min = parseInt(input.min);
-        const max = parseInt(input.max);
+    updateWorkoutInfoPreview() {
+        // Update workout description preview based on current input values
+        const rounds = parseInt(this.roundsInput.value) || this.defaultConfig.totalRounds;
+        const workTime = parseInt(this.workTimeInput.value) || this.defaultConfig.workTime;
+        const restTime = parseInt(this.restTimeInput.value) || this.defaultConfig.restTime;
+        const totalTime = rounds * (workTime + restTime);
         
-        if (value < min) {
-            input.value = min;
-        } else if (value > max) {
-            input.value = max;
-        }
+        this.workoutDescription.innerHTML = `<strong>${rounds}</strong> rounds × (<strong>${workTime}</strong>s work + <strong>${restTime}</strong>s rest) = <strong>${totalTime}</strong>s`;
     }
     
     applySettings() {
@@ -176,6 +177,7 @@ class TabataTimer {
         this.roundsInput.value = this.defaultConfig.totalRounds;
         this.workTimeInput.value = this.defaultConfig.workTime;
         this.restTimeInput.value = this.defaultConfig.restTime;
+        this.updateWorkoutInfoPreview();
     }
     
     showNotification(message) {
@@ -415,14 +417,20 @@ class TabataTimer {
                 this.phaseDisplay.textContent = 'GET READY';
                 this.timerContainer.classList.remove('work', 'rest');
                 this.timerContainer.classList.add('get-ready');
+                document.body.classList.remove('work-phase', 'rest-phase');
+                document.body.classList.add('get-ready-phase');
             } else if (this.isWorkPhase) {
                 this.phaseDisplay.textContent = 'WORK';
                 this.timerContainer.classList.remove('rest', 'get-ready');
                 this.timerContainer.classList.add('work');
+                document.body.classList.remove('rest-phase', 'get-ready-phase');
+                document.body.classList.add('work-phase');
             } else {
                 this.phaseDisplay.textContent = 'REST';
                 this.timerContainer.classList.remove('work', 'get-ready');
                 this.timerContainer.classList.add('rest');
+                document.body.classList.remove('work-phase', 'get-ready-phase');
+                document.body.classList.add('rest-phase');
             }
             
             if (this.isPaused) {
@@ -439,6 +447,7 @@ class TabataTimer {
                 this.phaseDisplay.innerHTML = 'Click to start';
             }
             this.timerContainer.classList.remove('work', 'rest', 'complete', 'get-ready');
+            document.body.classList.remove('work-phase', 'rest-phase', 'get-ready-phase');
             this.timeDisplay.textContent = '00:00';
         }
         
