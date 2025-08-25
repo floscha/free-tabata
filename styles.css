@@ -250,7 +250,27 @@ body.rest-phase {
 }
 
 body.get-ready-phase {
-    background: linear-gradient(135deg, #ffa726, #ff9800);
+    background: #f59e0b;
+}
+
+body.complete-phase {
+    background: #8b5cf6;
+}
+
+.timer-display.complete {
+    background: #8b5cf6 !important;
+    color: white !important;
+    animation: pulse 1s ease-in-out;
+}
+
+.timer-display.complete .time,
+.timer-display.complete .phase {
+    color: white !important;
+}
+
+.timer-display.complete .time {
+    font-size: 1.75rem;
+    font-weight: 600;
 }
 
 .timer-display.get-ready {
@@ -330,14 +350,7 @@ body.get-ready-phase {
     }
 }
 
-.timer-display.complete {
-    animation: celebration 0.6s ease-in-out;
-    background: linear-gradient(135deg, #ffd700, #ff6b6b) !important;
-    color: white;
-    border-color: #ffd700;
-    position: relative;
-    overflow: hidden;
-}
+
 
 /* Attribution footer */
 .attribution {

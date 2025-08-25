@@ -325,7 +325,8 @@ class TabataTimer {
         this.hasBeenStarted = false; // Reset the started flag
         
         // Reset visual state
-        this.timerContainer.classList.remove('work', 'rest', 'get-ready');
+        this.timerContainer.classList.remove('work', 'rest', 'get-ready', 'complete');
+        document.body.classList.remove('work-phase', 'rest-phase', 'get-ready-phase', 'complete-phase');
         
         this.updateDisplay();
         this.updateRoundBoxes();
@@ -384,10 +385,14 @@ class TabataTimer {
         this.releaseWakeLock();
         
         // Show completion with celebration
-        this.phaseDisplay.innerHTML = 'Workout Complete!<br><small style="font-size: 0.7em; opacity: 0.9;">🎉 Amazing job! 🎉</small>';
-        this.timeDisplay.textContent = '�';
+        this.phaseDisplay.innerHTML = 'Workout Complete!';
+        this.timeDisplay.textContent = 'Congratulations!';
         this.timerContainer.classList.remove('work', 'rest', 'get-ready');
         this.timerContainer.classList.add('complete');
+        
+        // Add purple background for completion
+        document.body.classList.remove('work-phase', 'rest-phase', 'get-ready-phase');
+        document.body.classList.add('complete-phase');
         
         // Update round boxes to mark all rounds as completed
         this.updateRoundBoxes();
@@ -441,14 +446,17 @@ class TabataTimer {
                 }
             }
         } else {
-            if (this.hasBeenStarted) {
-                this.phaseDisplay.innerHTML = 'Click to start<br><small style="opacity: 0.7; font-size: 0.7em;">Double-click to reset</small>';
-            } else {
-                this.phaseDisplay.innerHTML = 'Click to start';
+            // Check if we're in completion state - don't override the congratulations message
+            if (!this.timerContainer.classList.contains('complete')) {
+                if (this.hasBeenStarted) {
+                    this.phaseDisplay.innerHTML = 'Click to start<br><small style="opacity: 0.7; font-size: 0.7em;">Double-click to reset</small>';
+                } else {
+                    this.phaseDisplay.innerHTML = 'Click to start';
+                }
+                this.timerContainer.classList.remove('work', 'rest', 'complete', 'get-ready');
+                document.body.classList.remove('work-phase', 'rest-phase', 'get-ready-phase', 'complete-phase');
+                this.timeDisplay.textContent = '00:00';
             }
-            this.timerContainer.classList.remove('work', 'rest', 'complete', 'get-ready');
-            document.body.classList.remove('work-phase', 'rest-phase', 'get-ready-phase');
-            this.timeDisplay.textContent = '00:00';
         }
         
         // Update round display
