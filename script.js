@@ -411,9 +411,25 @@ class TabataTimer {
     updateDisplay() {
         // Update time display
         if (this.currentTime > 0) {
-            const minutes = Math.floor(this.currentTime / 60);
-            const seconds = this.currentTime % 60;
-            this.timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            // Determine current interval duration to decide display format
+            let currentIntervalDuration;
+            if (this.isGetReadyPhase) {
+                currentIntervalDuration = this.getReadyTime;
+            } else if (this.isWorkPhase) {
+                currentIntervalDuration = this.workTime;
+            } else {
+                currentIntervalDuration = this.restTime;
+            }
+            
+            // If interval is less than 60 seconds, show just seconds
+            if (currentIntervalDuration < 60) {
+                this.timeDisplay.textContent = `${this.currentTime}`;
+            } else {
+                // Show minutes:seconds format for longer intervals
+                const minutes = Math.floor(this.currentTime / 60);
+                const seconds = this.currentTime % 60;
+                this.timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
         }
         
         // Update phase display
@@ -449,13 +465,13 @@ class TabataTimer {
             // Check if we're in completion state - don't override the congratulations message
             if (!this.timerContainer.classList.contains('complete')) {
                 if (this.hasBeenStarted) {
-                    this.phaseDisplay.innerHTML = 'Click to start<br><small style="opacity: 0.7; font-size: 0.7em;">Double-click to reset</small>';
+                    this.phaseDisplay.innerHTML = 'Press to start<br><small style="opacity: 0.7; font-size: 0.7em;">Double-click to reset</small>';
                 } else {
-                    this.phaseDisplay.innerHTML = 'Click to start';
+                    this.phaseDisplay.innerHTML = 'Press to start';
                 }
                 this.timerContainer.classList.remove('work', 'rest', 'complete', 'get-ready');
                 document.body.classList.remove('work-phase', 'rest-phase', 'get-ready-phase', 'complete-phase');
-                this.timeDisplay.textContent = '00:00';
+                this.timeDisplay.textContent = '';
             }
         }
         
